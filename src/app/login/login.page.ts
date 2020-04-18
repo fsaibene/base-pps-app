@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
 import { AuthService } from '../auth.service';
 import { BehaviorSubject } from 'rxjs';
-import { ToastController, NavController, NavParams, LoadingController } from '@ionic/angular';
+import { ToastController, NavController, LoadingController } from '@ionic/angular';
 import { User } from '../model/user';
 import { NavService } from '../services/nav.service';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -22,7 +22,6 @@ export class LoginPage {
     public toastCtrl: ToastController,
     private authAf : AngularFireAuth,
     public navCtrl: NavController,
-    public navParams: NavParams,
     public loadingCtrl: LoadingController  
   ) {
     
