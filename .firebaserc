@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "carga-de-credito-fer": {
+      "hosting": {
+        "app": [
+          "carga-de-credito-fer"
+        ]
+      }
+    }
+  }
+}
