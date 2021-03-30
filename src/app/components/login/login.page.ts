@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AuthFirebaseErrors } from 'src/app/auth/auth-errors';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class LoginPage  implements OnInit{
     public loginForm: FormGroup = new FormGroup({
-        'email': new FormControl(null, Validators.required),
+        'email': new FormControl(null, [Validators.email, Validators.required]),
         'password': new FormControl(null, [
             Validators.required, Validators.minLength(6)]),
     });
@@ -33,48 +34,31 @@ export class LoginPage  implements OnInit{
 
     async login() {
         this.needValidate.next(true);
-        if(this.loginForm.valid){
-            try {
-                let loading = this.loadSpinner();
-                loading.then(async loader =>{
-                    loader.present();
-                    await this.auth.login(this.loginForm.controls["email"].value, this.loginForm.controls["password"].value)
-                    .then(result => {
-                        this.ns.setNavRoot(this.navCtrl);
-                        this.navCtrl.navigateRoot("/home")})
-                    .catch(error => {
+        if(this.loginForm.valid) {
+            let loading = this.loadSpinner();
+            loading.then(async loader => {
+                loader.present();
+                await this.auth.login(this.loginForm.controls["email"].value, this.loginForm.controls["password"].value)
+                .then(result => {
+                    if(result && result["hasError"]){
                         loading.then(l => l.dismiss());
-                        this.showToast(error.message);
-                    })
+                        this.showToast(result.code);
+                    } else {
+                        this.ns.setNavRoot(this.navCtrl);
+                        this.navCtrl.navigateRoot("/home");
+                    }
                 });
-            } catch (error) {
-                if(error.code == "auth/argument-error"){
-                    var mailError = "Formato de mail incorrecto";
-                    this.showToast(mailError);
-                }
-            }
+            })
         }
     }
 
-  async showToast(mensaje: string) {
-    switch(mensaje)
-    {
-      case "The email address is badly formatted.":
-      {
-        mensaje = "El mail no es correcto";
-        break;
-      }
-      case "The password is invalid or the user does not have a password.":
-      {
-        mensaje = "Clave incorrecta";
-        break;
-      }
-      case "There is no user record corresponding to this identifier. The user may have been deleted.":
-      {
-        mensaje = "No existe un usuario con ese email.";
-      }
-    }
-    (await this.toastService.showToast(mensaje));
+  async showToast(code: string) {
+    if(AuthFirebaseErrors[code]){
+        (await this.toastService.showToast(AuthFirebaseErrors[code]));
+    } else {
+        (await this.toastService.showToast("Error desconocido"));
+    } 
+
   }
   
   register(){

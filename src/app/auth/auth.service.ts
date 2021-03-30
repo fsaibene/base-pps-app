@@ -33,17 +33,19 @@ export class AuthService {
   }
 
   // Sign in with email/password
-    public async login(email: string, password: string): Promise<void> {
-        try {
-            const result = await this.afAuth.signInWithEmailAndPassword(email, password);
+    public async login(email: string, password: string): Promise<any> {
+        return await this.afAuth.signInWithEmailAndPassword(email, password).then(result => {
             this.ngZone.run(() => {
-            this.router.navigate(['home']);
+                this.router.navigate(['home']);
             });
             this.setUserData(result.user);
             this.loggedUser.next(email);
-        } catch (error) {
-            window.alert(error.message);
-        }
+        }).catch(error => {
+            if(error) {
+                error["hasError"] = true;
+            }
+            return error;
+        });
   }
 
   // Sign up with email/password

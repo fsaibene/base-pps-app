@@ -3,7 +3,7 @@
         <ion-buttons slot="start">
             <ion-back-button></ion-back-button>
         </ion-buttons>
-        <ion-title>Log In</ion-title>
+        <ion-title>Iniciar sesión</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -21,8 +21,10 @@
         </ion-item>
         <ion-row>
             <ion-col>
-            <ion-button type="submit" color="danger" expand="block">Sign In</ion-button>
+                <ion-button type="submit" color="danger" expand="block">Sign In</ion-button>
                 <a [routerLink]="['/forgot-password']" class="small-text">Forgot Password?</a>
+                <br>
+                <a [routerLink]="['/register']" class="small-text">Registrarse</a>
             </ion-col>
         </ion-row>
     </form>
